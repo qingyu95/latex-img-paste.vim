@@ -184,9 +184,9 @@ function! latexip#MarkdownClipboardImage()
         " let relpath = s:SaveNewFile(g:latexip_imgdir, tmpfile)
         let extension = split(tmpfile, '\.')[-1]
         let relpath = g:latexip_imgdir_intext . '/' . g:latexip_tmpname . '.' . extension
-        execute "normal! i\\begin{figure}\<CR>\\centering\<CR>\\includegraphics[width=\\linewidth]{" . relpath . "}\<CR>\\caption{" . g:latexip_tmpname[0:0] . g:latexip_tmpname[1:] . "}\<CR>\\label{" . g:latexip_tmpname[0:0]
+        execute "normal! i\\begin{figure}[!htbp]\<CR>\\centering\<CR>\\includegraphics[width=\\linewidth]{" . relpath . "}\<CR>\\caption{" . g:latexip_tmpname[0:0] . g:latexip_tmpname[1:] . "}\<CR>\\label{ "
         let ipos = getcurpos()
-        execute "normal! a" . g:latexip_tmpname[1:] . "}\<CR>\\end{figure}"
+        execute "normal! a" . "}\<CR>\\end{figure}"
         call setpos('.', ipos)
         execute "normal! vt}\<C-g>"
     endif
