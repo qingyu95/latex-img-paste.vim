@@ -8,14 +8,14 @@ function! s:IsWSL()
 endfunction
 
 function! s:SafeMakeDir()
-    if !exists('g:mdip_imgdir_absolute')
+    if !exists('g:latexip_imgdir_absolute')
         if s:os == "Windows"
-            let outdir = expand('%:p:h') . '\' . g:mdip_imgdir
+            let outdir = expand('%:p:h') . '\' . g:latexip_imgdir
     else
-            let outdir = expand('%:p:h') . '/' . g:mdip_imgdir
+            let outdir = expand('%:p:h') . '/' . g:latexip_imgdir
         endif
     else
-	let outdir = g:mdip_imgdir
+	let outdir = g:latexip_imgdir
     endif
     if !isdirectory(outdir)
         call mkdir(outdir)
@@ -124,10 +124,10 @@ endfunction
 
 function! s:SaveNewFile(imgdir, tmpfile)
     let extension = split(a:tmpfile, '\.')[-1]
-    let reldir = g:mdip_imgdir
+    let reldir = g:latexip_imgdir
     let cnt = 0
-    let filename = a:imgdir . '/' . g:mdip_imgname . cnt . '.' . extension
-    let relpath = reldir . '/' . g:mdip_imgname . cnt . '.' . extension
+    let filename = a:imgdir . '/' . g:latexip_imgname . cnt . '.' . extension
+    let relpath = reldir . '/' . g:latexip_imgname . cnt . '.' . extension
     while filereadable(filename)
         call system('diff ' . a:tmpfile . ' ' . filename)
         if !v:shell_error
@@ -135,8 +135,8 @@ function! s:SaveNewFile(imgdir, tmpfile)
             return relpath
         endif
         let cnt += 1
-        let filename = a:imgdir . '/' . g:mdip_imgname . cnt . '.' . extension
-        let relpath = reldir . '/' . g:mdip_imgname . cnt . '.' . extension
+        let filename = a:imgdir . '/' . g:latexip_imgname . cnt . '.' . extension
+        let relpath = reldir . '/' . g:latexip_imgname . cnt . '.' . extension
     endwhile
     if filereadable(a:tmpfile)
         call rename(a:tmpfile, filename)
@@ -163,7 +163,7 @@ function! s:InputName()
     return name
 endfunction
 
-function! mdip#MarkdownClipboardImage()
+function! latexip#MarkdownClipboardImage()
     " detect os: https://vi.stackexchange.com/questions/2572/detect-os-in-vimscript
     let s:os = "Windows"
     if !(has("win64") || has("win32") || has("win16"))
@@ -172,40 +172,40 @@ function! mdip#MarkdownClipboardImage()
 
     let workdir = s:SafeMakeDir()
     " change temp-file-name and image-name
-    let g:mdip_tmpname = s:InputName()
-    if empty(g:mdip_tmpname)
-      let g:mdip_tmpname = g:mdip_imgname . '_' . s:RandomName()
+    let g:latexip_tmpname = s:InputName()
+    if empty(g:latexip_tmpname)
+      let g:latexip_tmpname = g:latexip_imgname . '_' . s:RandomName()
     endif
 
-    let tmpfile = s:SaveFileTMP(workdir, g:mdip_tmpname)
+    let tmpfile = s:SaveFileTMP(workdir, g:latexip_tmpname)
     if tmpfile == 1
         return
     else
-        " let relpath = s:SaveNewFile(g:mdip_imgdir, tmpfile)
+        " let relpath = s:SaveNewFile(g:latexip_imgdir, tmpfile)
         let extension = split(tmpfile, '\.')[-1]
-        let relpath = g:mdip_imgdir_intext . '/' . g:mdip_tmpname . '.' . extension
-        execute "normal! i![" . g:mdip_tmpname[0:0]
+        let relpath = g:latexip_imgdir_intext . '/' . g:latexip_tmpname . '.' . extension
+        execute "normal! i\begin{figure}<CR>\centering<CR>\includegraphics[width=\linewidth]{" . relpath . "}<CR>\caption{" . g:latexip_tmpname[0:0] . g:latexip_tmpname[1:] . "}<CR>\label{"
         let ipos = getcurpos()
-        execute "normal! a" . g:mdip_tmpname[1:] . "](" . relpath . ")"
+        execute "normal! a" . g:latexip_tmpname[0:0] . "}<CR>\end{figure}"
         call setpos('.', ipos)
-        execute "normal! vt]\<C-g>"
+        execute "normal! vt}\<C-g>"
     endif
 endfunction
 
-if !exists('g:mdip_imgdir') && !exists('g:mdip_imgdir_absolute')
-    let g:mdip_imgdir = 'img'
+if !exists('g:latexip_imgdir') && !exists('g:latexip_imgdir_absolute')
+    let g:latexip_imgdir = 'img'
 endif
 "allow absolute paths. E.g., on linux: /home/path/to/imgdir/
-if exists('g:mdip_imgdir_absolute')
-    let g:mdip_imgdir = g:mdip_imgdir_absolute
+if exists('g:latexip_imgdir_absolute')
+    let g:latexip_imgdir = g:latexip_imgdir_absolute
 endif
 "allow a different intext reference for relative links
-if !exists('g:mdip_imgdir_intext')
-    let g:mdip_imgdir_intext = g:mdip_imgdir
+if !exists('g:latexip_imgdir_intext')
+    let g:latexip_imgdir_intext = g:latexip_imgdir
 endif
-if !exists('g:mdip_tmpname')
-    let g:mdip_tmpname = 'tmp'
+if !exists('g:latexip_tmpname')
+    let g:latexip_tmpname = 'tmp'
 endif
-if !exists('g:mdip_imgname')
-    let g:mdip_imgname = 'image'
+if !exists('g:latexip_imgname')
+    let g:latexip_imgname = 'image'
 endif
