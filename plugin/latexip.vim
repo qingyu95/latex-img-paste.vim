@@ -172,9 +172,9 @@ function! latexip#MarkdownClipboardImage()
 
     let workdir = s:SafeMakeDir()
     " change temp-file-name and image-name
-    let g:latexip_tmpname = s:InputName()
+    " let g:latexip_tmpname = s:InputName()
     if empty(g:latexip_tmpname)
-      let g:latexip_tmpname = g:latexip_imgname . '_' . s:RandomName()
+      let g:latexip_tmpname = s:RandomName()
     endif
 
     let tmpfile = s:SaveFileTMP(workdir, g:latexip_tmpname)
@@ -184,9 +184,9 @@ function! latexip#MarkdownClipboardImage()
         " let relpath = s:SaveNewFile(g:latexip_imgdir, tmpfile)
         let extension = split(tmpfile, '\.')[-1]
         let relpath = g:latexip_imgdir_intext . '/' . g:latexip_tmpname . '.' . extension
-        execute "normal! i\\begin{figure}[!htbp]\<CR>\\centering\<CR>\\includegraphics[width=\\linewidth]{" . relpath . "}\<CR>\\caption{" . g:latexip_tmpname[0:0] . g:latexip_tmpname[1:] . "}\<CR>\\label{ "
+        execute "normal! i\\begin{figure}[!htbp]\<CR>\\centering\<CR>\\includegraphics[width=\\linewidth]{" . relpath . "}\<CR>\\caption{ "
         let ipos = getcurpos()
-        execute "normal! a" . "}\<CR>\\end{figure}"
+        execute "normal! a" . "}\<CR>\\label{" . g:latexip_tmpname . "}\<CR>\\end{figure}"
         call setpos('.', ipos)
         execute "normal! vt}\<C-g>"
     endif
