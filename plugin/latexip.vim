@@ -182,11 +182,7 @@ function! latexip#UlClipboardImage()
         " let relpath = s:SaveNewFile(g:latexip_imgdir, tmpfile)
         let extension = split(tmpfile, '\.')[-1]
         let relpath = g:latexip_imgdir_intext . '/' . g:latexip_tmpname . '.' . extension
-        execute "normal! a\\begin{figure}[!htbp]\<CR>\\centering\<CR>\\includegraphics[width=\\linewidth]{" . relpath . "}\<CR>\\caption{ "
-        let ipos = getcurpos()
-        execute "normal! a" . "}\<CR>\\label{" . g:latexip_tmpname . "}\<CR>\\end{figure}"
-        call setpos('.', ipos)
-        execute "normal! vt}\<C-g>"
+        return relpath
     endif
 endfunction
 
