@@ -163,6 +163,33 @@ function! s:InputName()
     return name
 endfunction
 
+function! latexip#UlClipboardImage()
+    " detect os: https://vi.stackexchange.com/questions/2572/detect-os-in-vimscript
+    let s:os = "Windows"
+    if !(has("win64") || has("win32") || has("win16"))
+        let s:os = substitute(system('uname'), '\n', '', '')
+    endif
+
+    let workdir = s:SafeMakeDir()
+    " change temp-file-name and image-name
+    " let g:latexip_tmpname = s:InputName()
+    let g:latexip_tmpname = s:RandomName()
+
+    let tmpfile = s:SaveFileTMP(workdir, g:latexip_tmpname)
+    if tmpfile == 1
+        return
+    else
+        " let relpath = s:SaveNewFile(g:latexip_imgdir, tmpfile)
+        let extension = split(tmpfile, '\.')[-1]
+        let relpath = g:latexip_imgdir_intext . '/' . g:latexip_tmpname . '.' . extension
+        execute "normal! a\\begin{figure}[!htbp]\<CR>\\centering\<CR>\\includegraphics[width=\\linewidth]{" . relpath . "}\<CR>\\caption{ "
+        let ipos = getcurpos()
+        execute "normal! a" . "}\<CR>\\label{" . g:latexip_tmpname . "}\<CR>\\end{figure}"
+        call setpos('.', ipos)
+        execute "normal! vt}\<C-g>"
+    endif
+endfunction
+
 function! latexip#MarkdownClipboardImage()
     " detect os: https://vi.stackexchange.com/questions/2572/detect-os-in-vimscript
     let s:os = "Windows"
