@@ -173,9 +173,7 @@ function! latexip#MarkdownClipboardImage()
     let workdir = s:SafeMakeDir()
     " change temp-file-name and image-name
     " let g:latexip_tmpname = s:InputName()
-    if empty(g:latexip_tmpname)
-      let g:latexip_tmpname = s:RandomName()
-    endif
+    let g:latexip_tmpname = s:RandomName()
 
     let tmpfile = s:SaveFileTMP(workdir, g:latexip_tmpname)
     if tmpfile == 1
